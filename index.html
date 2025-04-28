@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Clients</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Liste des Clients</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clientModal">+ Ajouter</button>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Âge</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+                
+                <tr>
+                    <td>1</td>
+                    <td>Hamza</td>
+                    <td>34</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editClient(1)"><img src="update.png"width=40px></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient(1)"><img src="delete.ico"width=40px></button>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Omar</td>
+                    <td>44</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editClient(2)"><img src="update.png"width=40px></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient(2)"><img src="delete.ico"width=40px></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Othman</td>
+                    <td>25</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editClient(3)"><img src="update.png"width=40px></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient(3)"><img src="delete.ico"width=40px></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Hassan</td>
+                    <td>39</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editClient(4)"><img src="update.png"width=40px></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient(4)"><img src="delete.ico"width=40px></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal pour Ajouter un Client -->
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="clientForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="clientModalLabel">Ajouter un Client</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="clientId" class="form-label">ID</label>
+                            <input type="number" class="form-control" id="clientId" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientNom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="clientNom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientAge" class="form-label">Âge</label>
+                            <input type="number" class="form-control" id="clientAge" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function addClientToTable(id, nom, age) {
+            const tableBody = document.getElementById('clientsTableBody');
+            const newRow = document.createElement('tr');
+            newRow.className = 'fade-in';
+            newRow.innerHTML = `
+                <td>${id}</td>
+                <td>${nom}</td>
+                <td>${age}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editClient(${id})"><img src="update.png"width=40px></button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteClient(${id})"><img src="delete.ico"width=40px></button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        }
+
+        function removeClientFromTable(clientId) {
+            const rows = document.querySelectorAll('#clientsTableBody tr');
+            rows.forEach(row => {
+                if (row.cells[0].textContent == clientId) {
+                    row.classList.add('fade-out');
+                    setTimeout(() => row.remove(), 500);
+                }
+            });
+        }
+        function updateClientInTable(id, nom, age) {
+            const rows = document.querySelectorAll('#clientsTableBody tr');
+            rows.forEach(row => {
+                if (row.cells[0].textContent == id) {
+                    row.cells[1].textContent = nom;
+                    row.cells[2].textContent = age;
+                    row.classList.add('updated');
+                    setTimeout(() => row.classList.remove('updated'), 1000);
+                }
+            });
+        }
+        document.getElementById('clientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('clientId').value;
+            const nom = document.getElementById('clientNom').value;
+            const age = document.getElementById('clientAge').value;
+            
+            
+            addClientToTable(id, nom, age);
+            
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('clientModal'));
+            modal.hide();
+            
+            
+            this.reset();
+            
+            alert('Client ajouté avec succès!');
+        });
+
+        function deleteClient(clientId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce client?')) {
+                
+                
+                
+                removeClientFromTable(clientId);
+                
+               
+                alert('Client supprimé avec succès!');
+            }
+        }
+
+        
+        function editClient(clientId) {
+            
+            
+            
+            const rows = document.querySelectorAll('#clientsTableBody tr');
+            let clientData = null;
+            
+            rows.forEach(row => {
+                if (row.cells[0].textContent == clientId) {
+                    clientData = {
+                        id: row.cells[0].textContent,
+                        nom: row.cells[1].textContent,
+                        age: row.cells[2].textContent
+                    };
+                }
+            });
+            
+            if (clientData) {
+               
+                document.getElementById('clientId').value = clientData.id;
+                document.getElementById('clientNom').value = clientData.nom;
+                document.getElementById('clientAge').value = clientData.age;
+                
+                
+                document.getElementById('clientModalLabel').textContent = 'Modifier un Client';
+                
+                
+                const modal = new bootstrap.Modal(document.getElementById('clientModal'));
+                modal.show();
+                
+                
+                const form = document.getElementById('clientForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const newId = document.getElementById('clientId').value;
+                    const newNom = document.getElementById('clientNom').value;
+                    const newAge = document.getElementById('clientAge').value;
+                    
+                    
+                    updateClientInTable(newId, newNom, newAge);
+                    
+                   
+                    modal.hide();
+                  
+                    form.reset();
+                  
+                    document.getElementById('clientModalLabel').textContent = 'Ajouter un Client';
+                    
+                  
+                    alert('Client modifié avec succès!');
+                   
+                    form.onsubmit = originalFormSubmit;
+                };
+            }
+        }
+
+        
+        const originalFormSubmit = document.getElementById('clientForm').onsubmit;
+    </script>
+</body>
+</html>
